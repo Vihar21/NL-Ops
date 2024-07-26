@@ -5,14 +5,14 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    docker.build('data-analytics-app')
+                    docker.build('nl-ops')
                 }
             }
         }
         stage('Test') {
             steps {
                 script {
-                    docker.image('data-analytics-app').inside {
+                    docker.image('nl-ops').inside {
                         sh 'pytest'
                     }
                 }
@@ -23,7 +23,7 @@ pipeline {
                 script {
                     // Push the Docker image to a Docker registry (if needed)
                     docker.withRegistry('https://my-registry.com', 'my-credentials-id') {
-                        docker.image('data-analytics-app').push('latest')
+                        docker.image('nl-ops').push('latest')
                     }
                 }
             }
