@@ -2,42 +2,25 @@ pipeline {
     agent any
 
     stages {
-        stage('Setup') {
+        stage('Install Requirements') {
             steps {
-                bat '''
-                    python --version
-                    pip --version
-                '''
-            }
-        }
-        stage('Install Packages') {
-            steps {
-                bat 'pip install -r requirements.txt'
-            }
-        }
-        stage('Build') {
-            steps {
-                bat 'echo Building...'
+                script {
+                    sh 'pip install -r requirements.txt'
+                }
             }
         }
         stage('Test') {
             steps {
                 script {
-                    bat 'pytest'
+                    // Run Pytest tests here
+                    sh 'pytest'
                 }
             }
         }
         stage('Docker Build') {
             steps {
                 script {
-                    bat 'docker build -t data-analytics-app:latest .'
-                }
-            }
-        }
-        stage('Deploy to Minikube') {
-            steps {
-                script {
-                    bat 'kubectl apply -f k8s/deployment.yaml'
+                    docker.build('my-python-app:latest')
                 }
             }
         }
