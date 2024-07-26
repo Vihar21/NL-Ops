@@ -2,25 +2,29 @@ pipeline {
     agent any
 
     stages {
-        stage('Install Requirements') {
+        stage('Build') {
             steps {
                 script {
-                    bat 'pip install -r requirements.txt'
+                    docker.build('data-analytics-app')
                 }
             }
         }
         stage('Test') {
             steps {
                 script {
-                    // Run Pytest tests here
-                    bat 'pytest'
+                    docker.image('data-analytics-app').inside {
+                        sh 'pytest'
+                    }
                 }
             }
         }
-        stage('Docker Build') {
+        stage('Deploy') {
             steps {
                 script {
-                    bat 'docker build -t my-python-app:latest .'
+                    // Push the Docker image to a Docker registry (if needed)
+                    docker.withRegistry('https://my-registry.com', 'my-credentials-id') {
+                        docker.image('data-analytics-app').push('latest')
+                    }
                 }
             }
         }
