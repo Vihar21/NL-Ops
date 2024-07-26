@@ -5,25 +5,28 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    docker.build('nl-ops')
+                    sh 'pip install -r requirements.txt'
                 }
             }
         }
         stage('Test') {
             steps {
+                // Run Pytest tests here
+                sh 'pytest'
+            }
+        }
+        stage('Docker Build') {
+            steps {
                 script {
-                    docker.image('nl-ops').inside {
-                        sh 'pytest'
-                    }
+                    docker.build('my-python-app:latest')
                 }
             }
         }
-        stage('Deploy') {
+        stage('Deploy to Minikube') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
-                        docker.image('nl-ops').push('latest')
-                    }
+                    // Deploy application using kubectl
+                    sh 'kubectl apply -f k8s/deployment.yaml'
                 }
             }
         }
