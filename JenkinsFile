@@ -12,7 +12,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    docker.image('nl-ops').inside {
+                    docker.image('nl-ops').inside('-v "$PWD:/app"') {
                         sh 'pytest'
                     }
                 }
