@@ -2,17 +2,33 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/Cristeen20/ML_deploy_CICD.git'
+            }
+        }
         stage('Build') {
             steps {
                 script {
-                    sh 'pip install -r requirements.txt'
+                    sh '''
+                    # Create and activate virtual environment
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    # Install dependencies
+                    pip install -r requirements.txt
+                    '''
                 }
             }
         }
         stage('Test') {
             steps {
-                // Run Pytest tests here
-                sh 'pytest'
+                script {
+                    sh '''
+                    # Activate virtual environment and run tests
+                    source venv/bin/activate
+                    pytest
+                    '''
+                }
             }
         }
         stage('Docker Build') {
@@ -25,10 +41,27 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 script {
-                    // Deploy application using kubectl
-                    sh 'kubectl apply -f k8s/deployment.yaml'
+                    sh '''
+                    # Ensure kubectl is configured to use Minikube
+                    kubectl config use-context minikube
+                    # Apply Kubernetes configurations
+                    kubectl apply -f k8s/deployment.yaml
+                    '''
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            // Clean up workspace after build
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Please check the logs for details.'
         }
     }
 }
