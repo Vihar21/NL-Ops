@@ -21,7 +21,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    docker.withRegistry('https://my-registry.com', 'my-credentials-id') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
                         docker.image('nl-ops').push('latest')
                     }
                 }
