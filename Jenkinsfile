@@ -2,16 +2,7 @@ pipeline {
     agent any
 
     stages {
-        // stage('Checkout') {
-        //     steps {
-        //         git branch: 'main', url: 'https://github.com/Vihar21/NL-Ops.git'
-        //     }
-        //}
-     
-       
-
-
-
+}	
         stage('Build') {
             steps {
                 script {
@@ -20,12 +11,6 @@ pipeline {
                 }
             }
         }
-        //stage('Test') {
-         //   steps {
-                // Use Windows batch command to run tests
-         //       bat 'pytest'
-         //   }
-        //}
         stage('Docker Build') {
             steps {
                 script {
