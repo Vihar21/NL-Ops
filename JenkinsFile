@@ -2,12 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], 
-                          userRemoteConfigs: [[url: 'https://github.com/Vihar21/NL-Ops.git']]])
-            }
-        }
         stage('Build') {
             steps {
                 script {
@@ -27,7 +21,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Push the Docker image to a Docker registry
+                    // Push the Docker image to a Docker registry (if needed)
                     docker.withRegistry('https://my-registry.com', 'my-credentials-id') {
                         docker.image('nl-ops').push('latest')
                     }
